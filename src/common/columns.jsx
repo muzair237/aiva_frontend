@@ -1,0 +1,1 @@
+export const permissionColumns = ['Created At', 'Can', 'Description', 'Actions'];
