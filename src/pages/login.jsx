@@ -121,7 +121,7 @@ const Login = () => {
                     <div className="mt-4 text-center">
                       <p className="mb-0">
                         Don&apos;t have an account ?{' '}
-                        <Link href="/auth-signup-basic" className="fw-semibold text-primary text-decoration-underline">
+                        <Link href="/signup" className="fw-semibold text-primary text-decoration-underline">
                           {' '}
                           Signup{' '}
                         </Link>{' '}
