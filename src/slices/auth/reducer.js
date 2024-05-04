@@ -15,6 +15,30 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
+
+      // SINGUP
+      .addCase(authThunk.signUp.pending, state => {
+        state.user = {};
+        state.isLoggedIn = false;
+        state.errorMsg = '';
+        state.isLoading = true;
+        state.allowedPages = [];
+      })
+      .addCase(authThunk.signUp.fulfilled, (state, action) => {
+        state.user = action?.payload;
+        state.isLoggedIn = true;
+        state.errorMsg = '';
+        state.isLoading = false;
+        state.allowedPages = action?.payload?.allowedPages;
+      })
+      .addCase(authThunk.signUp.rejected, (state, action) => {
+        state.isLoggedIn = false;
+        state.user = {};
+        state.errorMsg = action?.error?.message;
+        state.isLoading = false;
+        state.allowedPages = [];
+      })
+
       // LOGIN
       .addCase(authThunk.login.pending, state => {
         state.user = {};

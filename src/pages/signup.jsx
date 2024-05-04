@@ -3,14 +3,20 @@ import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import Link from 'next/link';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import Input from '../components/Atoms/Input';
 import Label from '../components/Atoms/Label';
 import Button from '../components/Atoms/Button';
 // import logoLight from '../../../assets/images/logo-light.png';
 import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 import isLoggedIn from '../components/Common/isLoggedIn';
+import authThunk from '../slices/auth/thunk';
 
 const SignUp = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const isLoading = useSelector(state => state?.Auth?.isLoading);
   const initialValues = { first_name: '', last_name: '', email: '', password: '', DOB: '' };
 
   const validationSchema = Yup.object({
@@ -26,8 +32,9 @@ const SignUp = () => {
     DOB: Yup.date().required('Please Enter Date of Birth!').max(new Date(), 'Date of Birth cannot be in the future'),
   });
 
-  const onSubmit = data => {
-    console.log(data);
+  const onSubmit = payload => {
+    console.log(payload);
+    dispatch(authThunk.signUp({ payload, router }));
   };
 
   return (
@@ -60,7 +67,7 @@ const SignUp = () => {
                       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
                         <Form>
                           <Row>
-                            <div className="col-4 mb-2">
+                            <div className="col-4">
                               <Label htmlFor="firstname" className="form-label">
                                 First Name *
                               </Label>
@@ -71,7 +78,7 @@ const SignUp = () => {
                                 type="text"
                               />
                             </div>
-                            <div className="col-4 mb-2">
+                            <div className="col-4">
                               <Label htmlFor="lastname" className="form-label">
                                 Last Name *
                               </Label>
@@ -82,7 +89,7 @@ const SignUp = () => {
                                 type="text"
                               />
                             </div>
-                            <div className="mb-2 col-4">
+                            <div className="col-4">
                               <Label className="form-label" htmlFor="dob-input">
                                 Date of Birth *
                               </Label>
@@ -115,11 +122,7 @@ const SignUp = () => {
                           </div>
 
                           <div className="mt-4">
-                            <Button
-                              color="primary"
-                              // loading={isLoading}
-                              className="w-100"
-                              type="submit">
+                            <Button color="primary" loading={isLoading} className="w-100" type="submit">
                               Sign In
                             </Button>
                           </div>

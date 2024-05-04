@@ -1,4 +1,5 @@
 // AUTH ENDPOINT(S)
+export const SIGNUP = 'signUp';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Field, ErrorMessage } from 'formik';
+import { Field, useFormikContext, ErrorMessage } from 'formik';
 import Flatpickr from 'react-flatpickr';
 import TogglePasswordIcon from '../TogglePasswordIcon';
 import { StyledSelect, Error } from './Input.styles';
 
 const Input = ({ name, type, placeholder, options, ...props }) => {
+  const { setFieldValue } = useFormikContext();
   const [passwordShow, setPasswordShow] = useState(false);
 
   return (
@@ -22,11 +23,17 @@ const Input = ({ name, type, placeholder, options, ...props }) => {
         </>
       ) : type === 'date' ? (
         <Flatpickr
+          name={name}
+          type={type}
           className="form-control"
           options={{
             dateFormat: 'd M, Y',
+            onChange: e => {
+              setFieldValue(name, new Date(e));
+            },
           }}
           placeholder={placeholder}
+          {...props}
         />
       ) : type === 'checkbox' ? (
         <Field name={name} type={type} className="form-check-input" />
