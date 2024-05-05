@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Toast } from '../../components/Molecules/Toast';
-import { setCookie, clearAllCookies } from '../../helpers/common';
+import { setCookie, deleteCookie, clearAllCookies } from '../../helpers/common';
 import { Fetch } from '../../helpers/fetchWrapper';
-import { SIGNUP, LOGIN, LOGOUT } from '../../helpers/url_helper';
+import { SIGNUP, LOGIN, FORGET_PASSWORD, VERIFY_OTP, RESET_PASSWORD, LOGOUT } from '../../helpers/url_helper';
 
 const authThunk = {
   url: `${process.env.NEXT_PUBLIC_AIVA_API_URL}/user`,
@@ -45,8 +45,81 @@ const authThunk = {
           type: 'success',
           message,
         });
-        router.push('/dashboard');
+        router.push('/');
         return user;
+      }
+      const { message } = await res.json();
+      throw new Error(message ?? 'Something Went Wrong');
+    } catch ({ message }) {
+      Toast({
+        type: 'error',
+        message,
+      });
+      throw message;
+    }
+  }),
+
+  forgetPassword: createAsyncThunk('forget/forgetPassword', async ({ payload, router }) => {
+    try {
+      const { email } = payload;
+      const res = await Fetch.post(`${authThunk.url}/${FORGET_PASSWORD}`, payload);
+      if (res.status >= 200 && res.status < 300) {
+        const { message } = await res.json();
+        setCookie('email', email, 5);
+        if (router) router.push('/verify-otp');
+        Toast({
+          type: 'success',
+          message,
+        });
+        return;
+      }
+      const { message } = await res.json();
+      throw new Error(message ?? 'Something Went Wrong');
+    } catch ({ message }) {
+      Toast({
+        type: 'error',
+        message,
+      });
+      throw message;
+    }
+  }),
+
+  verifyOTP: createAsyncThunk('verify/verifyOtp', async ({ payload, router }) => {
+    try {
+      const res = await Fetch.post(`${authThunk.url}/${VERIFY_OTP}`, payload);
+      if (res.status >= 200 && res.status < 300) {
+        const { message } = await res.json();
+        // deleteCookie('email');
+        router.push('/create-password');
+        Toast({
+          type: 'success',
+          message,
+        });
+        return;
+      }
+      const { message } = await res.json();
+      throw new Error(message ?? 'Something Went Wrong');
+    } catch ({ message }) {
+      Toast({
+        type: 'error',
+        message,
+      });
+      throw message;
+    }
+  }),
+
+  resetPassword: createAsyncThunk('reset/resetPassword', async ({ payload, router }) => {
+    try {
+      const res = await Fetch.post(`${authThunk.url}/${RESET_PASSWORD}`, payload);
+      if (res.status >= 200 && res.status < 300) {
+        const { message } = await res.json();
+        deleteCookie('email');
+        router.push('/password-reset-success');
+        Toast({
+          type: 'success',
+          message,
+        });
+        return;
       }
       const { message } = await res.json();
       throw new Error(message ?? 'Something Went Wrong');

@@ -1,8 +1,12 @@
-export const setCookie = (name, value, domain, days) => {
+export const setCookie = (name, value, minutes, days, domain) => {
   let expires = '';
   if (days) {
     const date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = `; expires=${date.toUTCString()}`;
+  } else if (minutes) {
+    const date = new Date();
+    date.setTime(date.getTime() + minutes * 60 * 1000);
     expires = `; expires=${date.toUTCString()}`;
   }
   const domainString = domain ? `; domain=${domain}` : '';
@@ -20,6 +24,14 @@ export const getCookie = name => {
     if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
   }
   return null;
+};
+
+export const deleteCookie = (name, domain) => {
+  const expires = 'Thu, 01 Jan 1970 00:00:00 UTC';
+  const domainString = domain ? `; domain=${domain}` : '';
+  document.cookie = `${name}=; expires=${expires}; path=/${domainString}`;
+
+  return true;
 };
 
 export const clearAllCookies = () => {

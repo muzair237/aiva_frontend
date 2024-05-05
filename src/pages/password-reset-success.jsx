@@ -1,9 +1,7 @@
 import React from 'react';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
-import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 import Link from 'next/link';
-
-//import images
+import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 // import logoLight from '../../../assets/images/logo-light.png';
 
 const PasswordResetSuccess = () => (
@@ -38,7 +36,7 @@ const PasswordResetSuccess = () => (
                       <h4>Well done !</h4>
                       <p className="text-muted mx-4">You have Successfully Reset Your Password.</p>
                       <div className="mt-4">
-                        <Link href="/auth-signin-basic" className="btn btn-info w-100">
+                        <Link href="/login" className="btn btn-primary w-100">
                           Login
                         </Link>
                       </div>

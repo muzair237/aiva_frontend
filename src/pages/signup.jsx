@@ -17,7 +17,8 @@ const SignUp = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const isLoading = useSelector(state => state?.Auth?.isLoading);
-  const initialValues = { first_name: '', last_name: '', email: '', password: '', DOB: '' };
+
+  const initialValues = { first_name: '', last_name: '', email: '', password: '', newPassword: '', DOB: '' };
 
   const validationSchema = Yup.object({
     first_name: Yup.string().required('Please Enter First Name!').min(3, 'First Name must be at least 3 Characters'),
@@ -29,11 +30,16 @@ const SignUp = () => {
         '^(?=.*[!@#$%^&*])(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$',
         'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character.',
       ),
+    newPassword: Yup.string()
+      .when('password', {
+        is: val => val && val.length > 0,
+        then: () => Yup.string().oneOf([Yup.ref('password')], 'Both passwords need to be the same'),
+      })
+      .required('Confirm Password Required'),
     DOB: Yup.date().required('Please Enter Date of Birth!').max(new Date(), 'Date of Birth cannot be in the future'),
   });
 
   const onSubmit = payload => {
-    console.log(payload);
     dispatch(authThunk.signUp({ payload, router }));
   };
 
@@ -66,8 +72,8 @@ const SignUp = () => {
                     <div className="p-2 mt-4">
                       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
                         <Form>
-                          <Row>
-                            <div className="col-4">
+                          <Row className="mb-2">
+                            <div className="col-6">
                               <Label htmlFor="firstname" className="form-label">
                                 First Name *
                               </Label>
@@ -78,7 +84,7 @@ const SignUp = () => {
                                 type="text"
                               />
                             </div>
-                            <div className="col-4">
+                            <div className="col-6">
                               <Label htmlFor="lastname" className="form-label">
                                 Last Name *
                               </Label>
@@ -89,28 +95,38 @@ const SignUp = () => {
                                 type="text"
                               />
                             </div>
-                            <div className="col-4">
+                          </Row>
+                          <Row className="mb-2">
+                            <div className="col-6">
                               <Label className="form-label" htmlFor="dob-input">
                                 Date of Birth *
                               </Label>
-                              <div className="position-relative auth-pass-inputgroup mb-3">
+                              <div className="position-relative auth-pass-inputgroup">
                                 <Input name="DOB" type="date" placeholder="Select DOB" />
                               </div>
                             </div>
-                          </Row>
-                          <Row>
-                            <div className="col mb-2">
+                            <div className="col-6">
                               <Label htmlFor="email" className="form-label">
                                 Email *
                               </Label>
                               <Input name="email" type="text" placeholder="Enter email" />
                             </div>
-                            <div className="col mb-2">
+                          </Row>
+                          <Row className="mb-2">
+                            <div className="col-6">
                               <Label className="form-label" htmlFor="password-input">
                                 Password *
                               </Label>
                               <div className="position-relative auth-pass-inputgroup mb-0">
                                 <Input name="password" type="password" placeholder="Enter password" />
+                              </div>
+                            </div>
+                            <div className="col-6">
+                              <Label className="form-label" htmlFor="password-input">
+                                Confirm Password *
+                              </Label>
+                              <div className="position-relative auth-pass-inputgroup mb-0">
+                                <Input name="newPassword" type="password" placeholder="Enter password" />
                               </div>
                             </div>
                           </Row>
@@ -123,7 +139,7 @@ const SignUp = () => {
 
                           <div className="mt-4">
                             <Button color="primary" loading={isLoading} className="w-100" type="submit">
-                              Sign In
+                              Sign Up
                             </Button>
                           </div>
                           <div className="mt-4 text-center">
@@ -131,7 +147,7 @@ const SignUp = () => {
                               <p className="mb-0">
                                 Already have an account ?{' '}
                                 <Link href="/login" className="fw-semibold text-primary text-decoration-underline">
-                                  Sign In
+                                  Login
                                 </Link>
                               </p>
                             </div>

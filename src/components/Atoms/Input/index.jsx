@@ -36,7 +36,7 @@ const Input = ({ name, type, placeholder, options, ...props }) => {
           {...props}
         />
       ) : type === 'checkbox' ? (
-        <Field name={name} type={type} className="form-check-input" />
+        <Field name={name} type={type} className="form-check-input" {...props} />
       ) : type === 'select' ? (
         <StyledSelect name={name} options={options} {...props} />
       ) : (

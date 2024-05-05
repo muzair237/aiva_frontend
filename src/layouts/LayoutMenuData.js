@@ -3,12 +3,9 @@ import { useRouter } from 'next/router';
 
 const Navdata = () => {
   const router = useRouter();
-  const [isDashboard, setIsDashboard] = useState(false);
-  const [isPermissions, setIsPermissions] = useState(false);
-  const [isRoles, setIsRoles] = useState(false);
-  const [isUsers, setIsUsers] = useState(false);
+  const [isChat, setIsChat] = useState(false);
 
-  const [iscurrentState, setIscurrentState] = useState('Dashboard');
+  const [iscurrentState, setIscurrentState] = useState('Chat');
 
   function updateIconSidebar(e) {
     if (e && e.target && e.target.getAttribute('subitems')) {
@@ -25,8 +22,8 @@ const Navdata = () => {
 
   useEffect(() => {
     document.body.classList.remove('twocolumn-panel');
-    if (iscurrentState !== 'Dashboard') {
-      setIsDashboard(false);
+    if (iscurrentState !== 'Chat') {
+      setIsChat(false);
     }
   }, [router]);
 
@@ -36,54 +33,15 @@ const Navdata = () => {
       isHeader: true,
     },
     {
-      id: 'dashboard',
-      label: 'Dashboard',
+      id: 'Chat',
+      label: 'Chat',
       icon: 'ri-dashboard-2-line',
-      path: '/dashboard',
-      stateVariables: isDashboard,
+      path: '/chat',
+      stateVariables: isChat,
       click(e) {
         e.preventDefault();
-        setIsDashboard(!isDashboard);
-        setIscurrentState('Dashboard');
-        updateIconSidebar(e);
-      },
-    },
-    {
-      id: 'permissions',
-      label: 'Permissions',
-      icon: 'ri-key-2-fill',
-      path: '/permissions',
-      stateVariables: isPermissions,
-      click(e) {
-        e.preventDefault();
-        setIsPermissions(!isPermissions);
-        setIscurrentState('Permissions');
-        updateIconSidebar(e);
-      },
-    },
-    {
-      id: 'roles',
-      label: 'Roles',
-      icon: 'ri-team-fill',
-      path: '/roles',
-      stateVariables: isRoles,
-      click(e) {
-        e.preventDefault();
-        setIsRoles(!isRoles);
-        setIscurrentState('Roles');
-        updateIconSidebar(e);
-      },
-    },
-    {
-      id: 'users',
-      label: 'Users',
-      icon: 'ri-user-fill',
-      path: '/users',
-      stateVariables: isUsers,
-      click(e) {
-        e.preventDefault();
-        setIsUsers(!isUsers);
-        setIscurrentState('Users');
+        setIsChat(!isChat);
+        setIscurrentState('Chat');
         updateIconSidebar(e);
       },
     },
