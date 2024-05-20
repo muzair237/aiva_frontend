@@ -35,7 +35,7 @@ const Navdata = () => {
     {
       id: 'Chat',
       label: 'Chat',
-      icon: 'ri-dashboard-2-line',
+      icon: 'ri-chat-1-fill',
       path: '/chat',
       stateVariables: isChat,
       click(e) {

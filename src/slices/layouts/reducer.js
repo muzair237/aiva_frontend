@@ -21,7 +21,7 @@ export const initialState = {
   leftSidebarType: leftSidebarTypes.LIGHT,
   layoutPositionType: layoutPositionTypes.FIXED,
   topbarThemeType: topbarThemeTypes.DARK,
-  leftSidebarViewType: leftSidebarViewTypes.DETACHED,
+  leftSidebarViewType: leftSidebarViewTypes.DEFAULT,
   leftsidbarSizeType: leftsidbarSizeTypes.DEFAULT,
   leftSidebarImageType: leftSidebarImageTypes.IMG3,
   preloader: preloaderTypes.DISABLE,

@@ -2,13 +2,9 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import withRouter from '../components/Common/withRouter';
 
-//import Components
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
-// import RightSidebar from '../components/Common/RightSidebar';
-
-//import actions
 import {
   changeLayout,
   changeSidebarTheme,
@@ -21,7 +17,6 @@ import {
   changeSidebarImageType,
 } from '../slices/layouts/thunk';
 
-//redux
 import { useSelector, useDispatch } from 'react-redux';
 
 const Layout = props => {

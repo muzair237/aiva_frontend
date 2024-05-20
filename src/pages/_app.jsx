@@ -8,7 +8,7 @@ import VerticalLayout from '../layouts';
 import { getCookie } from '../helpers/common';
 
 export default function App({ Component, pageProps }) {
-  const allowedPages = getCookie('_deap');
+  const allowedPages = getCookie('_aivautc');
   return (
     <Provider store={store}>
       {allowedPages ? (
