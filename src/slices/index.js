@@ -6,13 +6,13 @@ import LayoutReducer from './layouts/reducer';
 // Auth
 import AuthReducer from './auth/reducer';
 
-// Permission
-import permissionReducer from './permissions/reducer';
+// Chat
+import ChatReducer from './chat/reducer';
 
 const rootReducer = combineReducers({
   Layout: LayoutReducer,
   Auth: AuthReducer,
-  Permission: permissionReducer,
+  Chat: ChatReducer,
 });
 
 export default rootReducer;
