@@ -2,12 +2,10 @@ import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import SimpleBar from 'simplebar-react';
-
 import { Container } from 'reactstrap';
 import VerticalLayout from './VerticalLayouts/index';
-
-import logoSm from '../../public/images/logo-sm.png';
-import logoDark from '../../public/images/logo-dark.png';
+import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
+import webNovaLogoSm from '../../public/images/svg/webNovaLogoSm.svg';
 import logoLight from '../../public/images/logo-light.png';
 
 const Sidebar = ({ layoutType }) => {
@@ -36,16 +34,16 @@ const Sidebar = ({ layoutType }) => {
         <div className="navbar-brand-box">
           <Link href="/" className="logo logo-dark">
             <span className="logo-sm">
-              <Image src={logoSm} alt="" height="22" />
+              <Image src={webNovaLogoSm} alt="" height="22" />
             </span>
             <span className="logo-lg">
-              <Image src={logoDark} alt="" height="17" />
+              <Image src={webNovaLogoLg} alt="" width="210" height="23" />
             </span>
           </Link>
 
           <Link href="/" className="logo logo-light">
             <span className="logo-sm">
-              <Image src={logoSm} alt="" height="22" />
+              <Image src={webNovaLogoSm} alt="" height="22" />
             </span>
             <span className="logo-lg">
               <Image src={logoLight} alt="" height="17" />
