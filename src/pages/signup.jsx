@@ -8,7 +8,8 @@ import { useRouter } from 'next/router';
 import Input from '../components/Atoms/Input';
 import Label from '../components/Atoms/Label';
 import Button from '../components/Atoms/Button';
-// import logoLight from '../../../assets/images/logo-light.png';
+import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
+import Image from 'next/image';
 import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 import isLoggedIn from '../components/Common/isLoggedIn';
 import authThunk from '../slices/auth/thunk';
@@ -53,10 +54,10 @@ const SignUp = () => {
                 <div className="text-center mt-sm-5 mb-4 text-white-50">
                   <div>
                     <Link href="/" className="d-inline-block auth-logo">
-                      {/* <img src={logoLight} alt="" height="20" /> */}
+                      <Image src={webNovaLogoLg} alt="WebNova Logo" height="24" />
                     </Link>
                   </div>
-                  <p className="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p>
+                  <p className="mt-3 fs-15 fw-medium">An Artificially Intelligent Virtual Assistant</p>
                 </div>
               </Col>
             </Row>
@@ -67,7 +68,7 @@ const SignUp = () => {
                   <CardBody className="p-4 pb-0">
                     <div className="text-center mt-2">
                       <h5 className="text-primary">Create New Account</h5>
-                      <p className="text-muted">Get your free velzon account now</p>
+                      <p className="text-muted">Get Your Free WebNova Account Now</p>
                     </div>
                     <div className="p-2 mt-4">
                       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
@@ -146,7 +147,7 @@ const SignUp = () => {
                             <div className="signin-other-title">
                               <p className="mb-0">
                                 Already have an account ?{' '}
-                                <Link href="/login" className="fw-semibold text-primary text-decoration-underline">
+                                <Link href="/login" className="fw-semibold text-primary">
                                   Login
                                 </Link>
                               </p>

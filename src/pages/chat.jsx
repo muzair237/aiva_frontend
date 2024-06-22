@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Head from 'next/head';
 import {
   Container,
   Row,
@@ -16,18 +17,26 @@ import {
 import Link from 'next/link';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
-import { map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import FeatherIcon from 'feather-icons-react';
 import { useDispatch, useSelector } from 'react-redux';
 import withAuthProtection from '../components/Common/withAuthProtection';
-import avatar from '../../public/images/users/user-dummy-img.jpg';
+import avatar from '../../public/images/chatbot.png';
 import BreadCrumb from '../components/Common/BreadCrumb';
 import chatThunk from '../slices/chat/thunk';
+import Image from 'next/image';
+import useSound from 'use-sound';
+import messageSent from '../../public/audio/messageSent.mp3';
+import messageReceived from '../../public/audio/messageReceived.mp3';
+import MessageLoader from '@/components/Molecules/MessageLoader';
 
 function Chat() {
   const dispatch = useDispatch();
   const user = useSelector(state => state?.Auth?.user);
-  const chat = useSelector(state => state?.Chat?.chat);
+  const userChat = useSelector(state => state?.Chat?.chat);
+  // const isLoading = useSelector(state => state?.Chat?.isLoading);
+  const [isLoading, setIsLoading] = useState(false);
+  const [chat, setChat] = useState(userChat);
   const [isInfoDetails, setIsInfoDetails] = useState(false);
   const [Chat_Box_Image, setChat_Box_Image] = useState(avatar);
   const [settings_Menu, setsettings_Menu] = useState(false);
@@ -36,43 +45,8 @@ function Chat() {
   const [curMessage, setcurMessage] = useState('');
   const [search_Menu, setsearch_Menu] = useState(false);
   const [reply, setreply] = useState('');
-  const messages = [
-    {
-      id: 1,
-      createdAt: '09:07 am',
-      message: 'Good morning 😊',
-      // roomId: 1,
-      sender: 'Lisa Parker',
-    },
-    {
-      id: 2,
-      createdAt: '09:08 am',
-      message: 'Good morning, How are you? What about our next meeting?',
-      // roomId: 1,
-      sender: 'Anna Adame',
-    },
-    {
-      id: 3,
-      createdAt: '09:10 am',
-      message: 'Yeah everything is fine. Our next meeting tomorrow at 10.00 AM',
-      roomId: 1,
-      sender: 'Lisa Parker',
-    },
-    {
-      // id: 4,
-      createdAt: '09:10 am',
-      message:
-        "Hey, I'm going to meet a friend of mine at the department store. I have to buy some presents for my parents 🎁.",
-      roomId: 1,
-      sender: 'Lisa Parker',
-    },
-    {
-      createdAt: '09:12 am',
-      message: "Wow that's great",
-      roomId: 1,
-      sender: 'Anna Adame',
-    },
-  ];
+  const [messageSentSound] = useSound(messageSent, { volume: 0.5 });
+  const [messageReceivedSound] = useSound(messageReceived, { volume: 0.5 });
 
   useEffect(() => {
     dispatch(chatThunk.getChat({ id: user?._id }));
@@ -90,23 +64,52 @@ function Chat() {
     setsettings_Menu(!settings_Menu);
   };
 
-  const addMessage = (roomId, sender) => {
-    const message = {
-      id: Math.floor(Math.random() * 100),
-      roomId,
-      sender,
-      message: curMessage,
-      createdAt: new Date(),
-    };
+  const addMessage = async () => {
     setcurMessage('');
-    dispatch(onAddMessage(message));
+    messageSentSound();
+    setChat(prev => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        roomId: 1,
+        timeStamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
+        message: curMessage,
+        sender: user ? `${user.firstName} ${user.lastName}` : 'Unknown',
+      },
+    ]);
+    // Adding message to chat
+    setIsLoading(true); // Set isLoading to true to display loader
+    try {
+      // Simulate an asynchronous operation (API call or any other async task)
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      const payload = {
+        query: curMessage,
+      };
+      const resultAction = await dispatch(chatThunk.askQuery({ payload }));
+      messageReceivedSound();
+      setChat(prev => [...prev, resultAction.payload.response]);
+    } catch (error) {
+      console.error('Error occurred:', error);
+    } finally {
+      setIsLoading(false); // After async operation completes, set isLoading back to false
+    }
   };
+
+  const scrollToBottom = useCallback(() => {
+    if (messageBox) {
+      messageBox.scrollTop = messageBox.scrollHeight + 1000;
+    }
+  }, [messageBox]);
+
+  useEffect(() => {
+    if (!isEmpty(chat)) scrollToBottom();
+  }, [chat, scrollToBottom]);
 
   const onKeyPress = e => {
     const { key, value } = e;
     if (key === 'Enter') {
-      setcurMessage(value);
-      addMessage(currentRoomId, currentUser.name);
+      e.preventDefault();
+      addMessage();
     }
   };
 
@@ -133,6 +136,10 @@ function Chat() {
   };
   return (
     <>
+      <Head>
+        <title>WebNova | CHAT</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <div className="page-content">
         <BreadCrumb title="Chat" />
         <Container fluid>
@@ -153,12 +160,14 @@ function Chat() {
                             <div className="flex-grow-1 overflow-hidden">
                               <div className="d-flex align-items-center">
                                 <div className="flex-shrink-0 chat-user-img online user-own-img align-self-center me-3 ms-0">
-                                  {Chat_Box_Image === undefined ? (
-                                    <img src={userDummayImage} className="rounded-circle avatar-xs" alt="" />
-                                  ) : (
-                                    <img src={Chat_Box_Image} className="rounded-circle avatar-xs" alt="" />
-                                  )}
-                                  <span className="user-status" />
+                                  <Image
+                                    src={Chat_Box_Image}
+                                    width={45}
+                                    height={43}
+                                    // className="rounded-circle avatar-xs"
+                                    alt=""
+                                  />
+                                  <span style={{ backgroundColor: 'success' }} className="user-status" />
                                 </div>
                                 <div className="flex-grow-1 overflow-hidden">
                                   <h5 className="text-truncate mb-0 fs-16">
@@ -250,11 +259,7 @@ function Chat() {
                                 <div className="conversation-list">
                                   {message.sender === Chat_Box_Username && (
                                     <div className="chat-avatar">
-                                      {Chat_Box_Image === undefined ? (
-                                        <img src={userDummayImage} alt="" />
-                                      ) : (
-                                        <img src={Chat_Box_Image} alt="" />
-                                      )}
+                                      <Image src={Chat_Box_Image} alt="" />
                                     </div>
                                   )}
 
@@ -295,8 +300,8 @@ function Chat() {
                                       </UncontrolledDropdown>
                                     </div>
                                     <div className="conversation-name">
-                                      <small className="text-muted time">09:07 am</small>{' '}
-                                      <span className="text-success check-message-icon">
+                                      <small className="text-muted time">{message?.timeStamp}</small>{' '}
+                                      <span className="text-primary check-message-icon">
                                         <i className="ri-check-double-line align-bottom" />
                                       </span>
                                     </div>
@@ -304,6 +309,11 @@ function Chat() {
                                 </div>
                               </li>
                             ))}
+                          {isLoading && (
+                            <li className="chat-list left">
+                              <MessageLoader />
+                            </li>
+                          )}
                         </ul>
                       </PerfectScrollbar>
                       <div
@@ -334,11 +344,12 @@ function Chat() {
                               <div className="links-list-item">
                                 <Button
                                   type="button"
-                                  color="info"
+                                  color="primary"
+                                  disabled={!curMessage}
                                   onClick={() => {
-                                    addMessage(currentRoomId, currentUser.name);
-                                    setemojiPicker(false);
-                                    setemojiArray('');
+                                    addMessage();
+                                    // setemojiPicker(false);
+                                    // setemojiArray('');
                                   }}
                                   className="chat-send waves-effect waves-light">
                                   <i className="ri-send-plane-2-fill align-bottom" />

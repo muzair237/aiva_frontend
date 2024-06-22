@@ -7,7 +7,9 @@ import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 import Button from '../components/Atoms/Button';
 import { getCookie } from '../helpers/common';
 import authThunk from '../slices/auth/thunk';
-// import logoLight from '../../../assets/images/logo-light.png';
+import Head from 'next/head';
+import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
+import Image from 'next/image';
 
 const VerifyOTP = () => {
   const dispatch = useDispatch();
@@ -56,6 +58,10 @@ const VerifyOTP = () => {
 
   return (
     <>
+      <Head>
+        <title>WebNova | VERIFY OTP</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <div className="auth-page-wrapper">
         <ParticlesAuth>
           <div className="auth-page-content">
@@ -64,11 +70,11 @@ const VerifyOTP = () => {
                 <Col lg={12}>
                   <div className="text-center mt-sm-5 mb-4 text-white-50">
                     <div>
-                      <Link href="/dashboard" className="d-inline-block auth-logo">
-                        {/* <img src={logoLight} alt="" height="20" /> */}
+                      <Link href="/" className="d-inline-block auth-logo">
+                        <Image src={webNovaLogoLg} alt="WebNova Logo" height="24" />
                       </Link>
                     </div>
-                    <p className="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p>
+                    <p className="mt-3 fs-15 text-primary fw-medium">An Artificially Intelligent Virtual Assistant</p>
                   </div>
                 </Col>
               </Row>
@@ -164,7 +170,7 @@ const VerifyOTP = () => {
                             disabled={isLoading}
                             className="w-100"
                             type="submit">
-                            Confirm
+                            Verify OTP
                           </Button>
                         </div>
                       </div>

@@ -1,7 +1,20 @@
 module.exports = {
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
     ignoreDuringBuilds: false,
+  },
+  webpack(config, options) {
+    config.module.rules.push({
+      test: /\.mp3$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          publicPath: '/_next/static/media',
+          outputPath: 'static/media',
+        },
+      },
+    });
+
+    return config;
   },
 };

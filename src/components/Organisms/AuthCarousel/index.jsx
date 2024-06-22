@@ -40,12 +40,12 @@ const AuthSlider = () => {
                 </div>
                 <div className="carousel-inner text-center text-white-50 pb-5">
                   <div className="item">
-                    <p className="fs-15 fst-italic">" Crafting Connections for Your Success – That's Our CRM."</p>
+                    <p className="fs-15 fst-italic">" Crafting Connections for Your Success – That's Our AIVA."</p>
                   </div>
                 </div>
                 <div className="carousel-inner text-center text-white-50 pb-5">
                   <div className="item">
-                    <p className="fs-15 fst-italic">" Strengthening Bonds, Driving Results: ConnectPro CRM "</p>
+                    <p className="fs-15 fst-italic">" Strengthening Bonds, Driving Results: ConnectPro AIVA "</p>
                   </div>
                 </div>
               </Carousel>

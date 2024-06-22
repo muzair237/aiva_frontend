@@ -18,7 +18,6 @@ const ParticlesAuth = ({ children }) => (
         </div>
       </div>
 
-      {/* pass the children */}
       {children}
 
       <footer className="footer">
@@ -26,10 +25,7 @@ const ParticlesAuth = ({ children }) => (
           <div className="row">
             <div className="col-lg-12">
               <div className="text-center">
-                <p className="text-muted">
-                  &copy; {new Date().getFullYear()} Velzon. Crafted with <i className="mdi mdi-heart text-danger" />
-                  by Themesbrand
-                </p>
+                <p className="mb-0">&copy; {new Date().getFullYear()} AIVA, Developed by WebNova</p>
               </div>
             </div>
           </div>

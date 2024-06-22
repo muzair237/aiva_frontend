@@ -14,7 +14,7 @@ const chatSlice = createSlice({
   extraReducers: builder => {
     builder
 
-      // SINGUP
+      // GET CHAT
       .addCase(chatThunk.getChat.pending, state => {
         state.isLoading = true;
       })
@@ -23,6 +23,18 @@ const chatSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(chatThunk.getChat.rejected, (state, action) => {
+        state.isLoggedIn = false;
+        state.errorMsg = action?.error?.message;
+      })
+
+      // ASK QUERY
+      .addCase(chatThunk.askQuery.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(chatThunk.askQuery.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(chatThunk.askQuery.rejected, (state, action) => {
         state.isLoggedIn = false;
         state.errorMsg = action?.error?.message;
       });

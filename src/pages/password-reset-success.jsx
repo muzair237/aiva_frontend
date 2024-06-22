@@ -2,10 +2,16 @@ import React from 'react';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import Link from 'next/link';
 import ParticlesAuth from '../components/Molecules/ParticlesAuth';
-// import logoLight from '../../../assets/images/logo-light.png';
+import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
+import Image from 'next/image';
+import Head from 'next/head';
 
 const PasswordResetSuccess = () => (
   <>
+    <Head>
+      <title>WebNova | PASSWORD RESET SUCCESSFULLY</title>
+      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    </Head>
     <div className="auth-page-wrapper">
       <ParticlesAuth>
         <div className="auth-page-content">
@@ -14,11 +20,11 @@ const PasswordResetSuccess = () => (
               <Col lg={12}>
                 <div className="text-center mt-sm-5 mb-4 text-white-50">
                   <div>
-                    <Link href="/dashboard" className="d-inline-block auth-logo">
-                      {/* <img src={logoLight} alt="" height="20" /> */}
+                    <Link href="/" className="d-inline-block auth-logo">
+                      <Image src={webNovaLogoLg} alt="WebNova Logo" height="24" />
                     </Link>
                   </div>
-                  <p className="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p>
+                  <p className="mt-3 fs-15 fw-medium">An Artificially Intelligent Virtual Assistant</p>
                 </div>
               </Col>
             </Row>

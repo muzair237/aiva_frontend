@@ -8,3 +8,4 @@ export const LOGOUT = 'logout';
 
 // CHAT ENDPOINT(S)
 export const GET_CHAT = 'get-chat';
+export const ASK_QUERY = 'ask-query';

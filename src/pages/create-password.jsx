@@ -7,12 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 import isLoggedIn from '../components/Common/isLoggedIn';
-// import logoLight from '../../../assets/images/logo-light.png';
+import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
+import Image from 'next/image';
 import Input from '../components/Atoms/Input';
 import Label from '../components/Atoms/Label';
 import Button from '../components/Atoms/Button';
 import authThunk from '../slices/auth/thunk';
 import { getCookie } from '../helpers/common';
+import Head from 'next/head';
 
 const CreatePassword = () => {
   const email = getCookie('email');
@@ -26,7 +28,7 @@ const CreatePassword = () => {
       .required('Please Enter Password!')
       .matches(
         /^(?=.*[!@#$%^&*])(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
-        'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character.',
+        'Password Must Follow the Rules Mentioned Above.',
       ),
     newPassword: Yup.string()
       .when('password', {
@@ -41,65 +43,79 @@ const CreatePassword = () => {
     dispatch(authThunk.resetPassword({ payload, router }));
   };
   return (
-    <ParticlesAuth>
-      <div className="auth-page-content">
-        <Container>
-          <Row>
-            <Col lg={12}>
-              <div className="text-center mt-sm-5 mb-4 text-white-50">
-                <div>
-                  <Link href="/#" className="d-inline-block auth-logo">
-                    {/* <img src={logoLight} alt="" height="20" /> */}
-                  </Link>
+    <>
+      <Head>
+        <title>WebNova | CREATE PASSWORD</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
+      <ParticlesAuth>
+        <div className="auth-page-content">
+          <Container>
+            <Row>
+              <Col lg={12}>
+                <div className="text-center mt-sm-5 mb-4 text-white-50">
+                  <div>
+                    <Link href="/" className="d-inline-block auth-logo">
+                      <Image src={webNovaLogoLg} alt="WebNova Logo" height="24" />
+                    </Link>
+                  </div>
+                  <p className="mt-3 fs-15 fw-medium text-primary">An Artificially Intelligent Virtual Assistant</p>
                 </div>
-                <p className="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p>
-              </div>
-            </Col>
-          </Row>
-          <Row className="justify-content-center">
-            <Col md={8} lg={6} xl={5}>
-              <Card className="mt-4">
-                <CardBody className="p-4">
-                  <div className="text-center mt-2">
-                    <h5 className="text-primary">Create new password</h5>
-                    <p className="text-muted">Your new password must be different from previous used password.</p>
-                  </div>
+              </Col>
+            </Row>
+            <Row className="justify-content-center">
+              <Col md={8} lg={6} xl={5}>
+                <Card className="mt-4">
+                  <CardBody className="p-4">
+                    <div className="text-center mt-2">
+                      <h5 className="text-primary">Create New Password</h5>
+                      <p className="text-muted">
+                        Password must contain at least one lowercase letter, one uppercase letter, one digit, and one
+                        special character.
+                      </p>
+                    </div>
 
-                  <div className="p-2">
-                    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-                      <Form>
-                        <div className="mb-3">
-                          <Label className="form-label" htmlFor="password-input">
-                            Password
-                          </Label>
-                          <div className="position-relative auth-pass-inputgroup">
-                            <Input name="password" type="password" placeholder="Enter password" />
+                    <div className="p-2">
+                      <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+                        <Form>
+                          <div className="mb-3">
+                            <Label className="form-label" htmlFor="password-input">
+                              Password
+                            </Label>
+                            <div className="position-relative auth-pass-inputgroup">
+                              <Input name="password" type="password" placeholder="Enter password" />
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="mb-3">
-                          <Label className="form-label" htmlFor="confirm-password-input">
-                            Confirm Password
-                          </Label>
-                          <div className="position-relative auth-pass-inputgroup mb-3">
-                            <Input name="newPassword" type="password" placeholder="Enter Confirm password" />
+                          <div className="mb-3">
+                            <Label className="form-label" htmlFor="confirm-password-input">
+                              Confirm Password
+                            </Label>
+                            <div className="position-relative auth-pass-inputgroup mb-3">
+                              <Input name="newPassword" type="password" placeholder="Enter Confirm password" />
+                            </div>
                           </div>
-                        </div>
-                        <div className="mt-4">
-                          <Button color="primary" loading={isLoading} className="w-100" type="submit">
-                            Reset Password
-                          </Button>
-                        </div>
-                      </Form>
-                    </Formik>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </div>
-    </ParticlesAuth>
+                          <div className="mt-4">
+                            <Button
+                              color="primary"
+                              loading={isLoading}
+                              disabled={isLoading}
+                              className="w-100"
+                              type="submit">
+                              Reset Password
+                            </Button>
+                          </div>
+                        </Form>
+                      </Formik>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      </ParticlesAuth>
+    </>
   );
 };
 
