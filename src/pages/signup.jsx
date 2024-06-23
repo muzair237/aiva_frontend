@@ -57,7 +57,7 @@ const SignUp = () => {
                       <Image src={webNovaLogoLg} alt="WebNova Logo" height="24" />
                     </Link>
                   </div>
-                  <p className="mt-3 fs-15 fw-medium">An Artificially Intelligent Virtual Assistant</p>
+                  <p className="mt-3 fs-15 fw-medium text-primary">An Artificially Intelligent Virtual Assistant</p>
                 </div>
               </Col>
             </Row>

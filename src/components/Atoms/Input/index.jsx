@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Field, useFormikContext, ErrorMessage } from 'formik';
 import Flatpickr from 'react-flatpickr';
+import Select from 'react-select';
 import TogglePasswordIcon from '../TogglePasswordIcon';
-import { StyledSelect, Error } from './Input.styles';
+import { Error } from './Input.styles';
 
-const Input = ({ name, type, placeholder, options, ...props }) => {
-  const { setFieldValue } = useFormikContext();
+const Input = ({ name, type, placeholder, value, defaultValue, options, ...props }) => {
+  const { setFieldValue, values } = useFormikContext();
   const [passwordShow, setPasswordShow] = useState(false);
+
+  useEffect(() => {
+    if (defaultValue && defaultValue !== undefined) {
+      setFieldValue(name, defaultValue);
+    } else if ((value !== undefined && !values[name]) || Array.isArray(value)) {
+      setFieldValue(name, value);
+    }
+  }, []);
 
   return (
     <>
@@ -21,11 +30,14 @@ const Input = ({ name, type, placeholder, options, ...props }) => {
           />
           <TogglePasswordIcon onClick={() => setPasswordShow(!passwordShow)} {...props} />
         </>
+      ) : type === 'checkbox' ? (
+        <Field name={name} type={type} className="form-check-input" />
       ) : type === 'date' ? (
         <Flatpickr
           name={name}
           type={type}
           className="form-control"
+          value={values[name] || []}
           options={{
             dateFormat: 'd M, Y',
             onChange: e => {
@@ -35,12 +47,33 @@ const Input = ({ name, type, placeholder, options, ...props }) => {
           placeholder={placeholder}
           {...props}
         />
-      ) : type === 'checkbox' ? (
-        <Field name={name} type={type} className="form-check-input" {...props} />
       ) : type === 'select' ? (
-        <StyledSelect name={name} options={options} {...props} />
+        <Select
+          name={name}
+          onChange={selectedOption => setFieldValue(name, selectedOption)}
+          options={options}
+          value={values[name] || value || defaultValue}
+          {...props}
+        />
+      ) : type === 'textarea' ? (
+        <Field
+          as="textarea"
+          rows={3}
+          name={name}
+          className="form-control"
+          placeholder={placeholder}
+          value={values[name] || []}
+          {...props}
+        />
       ) : (
-        <Field name={name} type={type} className="form-control" placeholder={placeholder} {...props} />
+        <Field
+          name={name}
+          type={type}
+          className="form-control"
+          placeholder={placeholder}
+          value={values[name] || []}
+          {...props}
+        />
       )}
 
       {/* ErrorMessage component */}

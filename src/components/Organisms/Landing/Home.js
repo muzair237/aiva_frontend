@@ -15,18 +15,9 @@ const Home = () => {
                   Welcome to <span className="text-success">WebNova</span>
                 </h1>
                 <p className="lead text-white-50 lh-base mb-4 pb-2">
-                  WebNova is your intelligent virtual assistant, here to help you answer queries, and
-                  provide insights. Experience the future of digital assistance with WebNova.
+                  WebNova is your intelligent virtual assistant, here to help you answer queries, and provide insights.
+                  Experience the future of digital assistance with WebNova.
                 </p>
-
-                <div className="hstack gap-2 justify-content-center">
-                  <Link href="/webnova-setup" className="btn btn-primary">
-                    Get Started <i className="ri-arrow-right-line align-middle ms-1"></i>
-                  </Link>
-                  <Link href="/webnova-features" className="btn btn-danger">
-                    Explore Features <i className="ri-arrow-right-line align-middle ms-1"></i>
-                  </Link>
-                </div>
               </div>
             </Col>
           </Row>

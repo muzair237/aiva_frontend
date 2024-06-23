@@ -30,8 +30,8 @@
     top: 0;
     bottom: 0;
     opacity: 0.9;
-    background: $primary;
-    background: linear-gradient(to top, darken($primary, 25%), $primary);
+    // background: $primary;
+    // background: linear-gradient(to top, darken($primary, 25%), $primary);
   }
 
   .profile-wid-img {
@@ -147,7 +147,6 @@
 .profile-setting-img {
   position: relative;
   height: 260px;
-
   .overlay-content {
     content: '';
     position: absolute;

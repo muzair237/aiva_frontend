@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 const Navdata = () => {
   const router = useRouter();
   const [isChat, setIsChat] = useState(false);
+  const [isProfile, setIsProfile] = useState(false);
+  const [isSettings, setIsSettings] = useState(false);
 
   const [iscurrentState, setIscurrentState] = useState('Chat');
 
@@ -42,6 +44,32 @@ const Navdata = () => {
         e.preventDefault();
         setIsChat(!isChat);
         setIscurrentState('Chat');
+        updateIconSidebar(e);
+      },
+    },
+    {
+      id: 'Profile',
+      label: 'Profile',
+      icon: ' ri-user-fill',
+      path: '/profile',
+      stateVariables: isProfile,
+      click(e) {
+        e.preventDefault();
+        setIsProfile(!isProfile);
+        setIscurrentState('Profile');
+        updateIconSidebar(e);
+      },
+    },
+    {
+      id: 'Settings',
+      label: 'Settings',
+      icon: '  ri-settings-2-fill',
+      path: '/settings',
+      stateVariables: isSettings,
+      click(e) {
+        e.preventDefault();
+        setIsSettings(!isSettings);
+        setIscurrentState('Settings');
         updateIconSidebar(e);
       },
     },

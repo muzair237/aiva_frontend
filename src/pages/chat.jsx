@@ -22,7 +22,6 @@ import FeatherIcon from 'feather-icons-react';
 import { useDispatch, useSelector } from 'react-redux';
 import withAuthProtection from '../components/Common/withAuthProtection';
 import avatar from '../../public/images/chatbot.png';
-import BreadCrumb from '../components/Common/BreadCrumb';
 import chatThunk from '../slices/chat/thunk';
 import Image from 'next/image';
 import useSound from 'use-sound';
@@ -141,7 +140,6 @@ function Chat() {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <div className="page-content">
-        <BreadCrumb title="Chat" />
         <Container fluid>
           <div className="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
             <div className="user-chat w-100 overflow-hidden">
@@ -164,7 +162,7 @@ function Chat() {
                                     src={Chat_Box_Image}
                                     width={45}
                                     height={43}
-                                    // className="rounded-circle avatar-xs"
+                                    className="rounded-circle"
                                     alt=""
                                   />
                                   <span style={{ backgroundColor: 'success' }} className="user-status" />

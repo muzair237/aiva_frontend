@@ -50,7 +50,7 @@ const Navbar = () => {
           <Collapse className="navbar-collapse" id="navbarSupportedContent">
             <Scrollspy
               offset={-18}
-              items={['hero', 'about', 'process', 'features', 'categories', 'creators']}
+              items={['hero', 'about', 'process', 'features', 'enquiry']}
               currentClassName="active"
               className="navbar-nav mx-auto mt-2 mt-lg-0"
               id="navbar-example">
