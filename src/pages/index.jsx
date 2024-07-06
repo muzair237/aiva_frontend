@@ -7,7 +7,8 @@ import Process from '../components/Organisms/Landing/Process';
 import Features from '../components/Organisms/Landing/Features';
 import CTA from '../components/Organisms/Landing/CTA';
 import Footer from '../components/Organisms/Landing/Footer';
-import Enquiry from '../components/Organisms/Landing/Enquiry';;
+import Enquiry from '../components/Organisms/Landing/Enquiry';
+import isLoggedIn from '../components/Common/isLoggedIn';
 
 const Index = () => {
   useEffect(() => {
@@ -50,12 +51,12 @@ const Index = () => {
         <CTA />
         <Enquiry />
         <Footer />
-        <button onClick={toTop} className="btn btn-danger btn-icon landing-back-top" id="back-to-top">
-          <i className="ri-arrow-up-line"></i>
+        <button type="button" onClick={toTop} className="btn btn-danger btn-icon landing-back-top" id="back-to-top">
+          <i className="ri-arrow-up-line" />
         </button>
       </div>
     </>
   );
 };
 
-export default Index;
+export default isLoggedIn(Index);

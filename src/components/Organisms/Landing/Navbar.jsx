@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Collapse, Container, NavbarToggler, NavLink } from 'reactstrap';
 import Link from 'next/link';
 import Scrollspy from 'react-scrollspy';
 import logodark from '../../../../public/images/svg/webNovaLogoBlack.svg';
 import logolight from '../../../../public/images/svg/webNovaLogoWhite.svg';
-import Image from 'next/image';
 
 const Navbar = () => {
   const [isOpenMenu, setisOpenMenu] = useState(false);
@@ -12,23 +12,24 @@ const Navbar = () => {
 
   const toggle = () => setisOpenMenu(!isOpenMenu);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', scrollNavigation, true);
-    }
-  });
-
   const scrollNavigation = () => {
-    var scrollup = document.documentElement.scrollTop;
+    const scrollup = document.documentElement.scrollTop;
     if (scrollup > 50) {
       setnavClass('is-sticky');
     } else {
       setnavClass('');
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', scrollNavigation, true);
+    }
+  });
+
   return (
     <>
-      <nav className={'navbar navbar-expand-lg navbar-landing navbar-light fixed-top ' + navClass} id="navbar">
+      <nav className={`navbar navbar-expand-lg navbar-landing navbar-light fixed-top ' ${navClass}`} id="navbar">
         <Container>
           <Link className="navbar-brand" href="/index">
             <Image src={logodark} className="card-logo card-logo-dark" alt="logo dark" height="20" />
@@ -44,7 +45,7 @@ const Navbar = () => {
             aria-controls="navbarSupportedContent"
             aria-expanded="false"
             aria-label="Toggle navigation">
-            <i className="mdi mdi-menu"></i>
+            <i className="mdi mdi-menu" />
           </NavbarToggler>
 
           <Collapse className="navbar-collapse" id="navbarSupportedContent">
@@ -82,7 +83,7 @@ const Navbar = () => {
           </Collapse>
         </Container>
       </nav>
-      <div className="bg-overlay bg-overlay-pattern"></div>
+      <div className="bg-overlay bg-overlay-pattern" />
     </>
   );
 };

@@ -2,6 +2,18 @@ module.exports = {
   eslint: {
     ignoreDuringBuilds: false,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: '**',
+      },
+    ],
+  },
   webpack(config, options) {
     config.module.rules.push({
       test: /\.mp3$/,

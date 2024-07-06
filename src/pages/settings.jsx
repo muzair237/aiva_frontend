@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
 import {
   Card,
@@ -14,17 +14,19 @@ import {
   TabContent,
   TabPane,
 } from 'reactstrap';
-import Input from '@/components/Atoms/Input';
+import Image from 'next/image';
 import classnames from 'classnames';
-import profileBg from '../../public/images/cover-pattern.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
-import Image from 'next/image';
-// import { updateProfile, editProfilePicture, resetPassword } from '../../slices/auth/thunk';
+import profileBg from '../../public/images/cover-pattern.png';
+import Input from '../components/Atoms/Input';
 import avatar1 from '../../public/images/users/user-avatar.png';
-import UpdatePassword from '@/components/Organisms/UpdatePassword';
-import Button from '@/components/Atoms/Button';
+import UpdatePassword from '../components/Organisms/UpdatePassword';
+import Button from '../components/Atoms/Button';
+import authThunk from '../slices/auth/thunk';
+import withAuthProtection from '../components/Common/withAuthProtection';
+import { Toast } from '../components/Molecules/Toast';
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -38,20 +40,11 @@ const Settings = () => {
       value: 'female',
     },
   ];
-  const heights = [];
-  for (let i = 100; i <= 250; i++) {
-    heights.push(i);
-  }
-  const weights = [];
-  const increment = 1;
-  const maxWeight = 150;
 
-  for (let i = 30; i <= maxWeight; i += increment) {
-    weights.push(i);
-  }
   const user = useSelector(state => state?.Auth?.user);
-  const userId = useSelector(state => state?.Login?.user?._id);
+  const isLoading = useSelector(state => state?.Auth?.isLoading);
   const [activeTab, setActiveTab] = useState('1');
+  const [profile_picture, setProfilePicture] = useState();
 
   const tabChange = tab => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -60,92 +53,59 @@ const Settings = () => {
     first_name: '',
     last_name: '',
     email: '',
-    gender: user?.gender ? user?.gender : '',
+    gender: null,
   };
   const validationSchema = yup.object().shape({
     first_name: yup.string().min(3, 'First Name should be atleast 3 Characters').required('First name is required'),
     last_name: yup.string().min(3, 'Last Name should be atleast 3 Characters').required('Last name is required'),
-    email: yup.string().email('Invalid email').required('Email is required'),
-    gender: yup.string(),
+    email: yup.string().required('Please Enter Email!').email('Please Enter a Valid Email!'),
+    gender: yup.object().required('Please Select Gender.'),
+    DOB: yup.date().required('Please Enter Date of Birth!').max(new Date(), 'Date of Birth cannot be in the future'),
   });
+
+  function handleFileChange(e, accept) {
+    const file = e.target.files[0];
+    const acceptableExtensions = accept.split(',').map(ext => ext.trim());
+    if (!acceptableExtensions.includes(file.type)) {
+      const extensions = acceptableExtensions
+        .map(ext => ext.split('/')[1].toUpperCase())
+        .join(', ')
+        .replace(/,(?=[^,]*$)/, ' and');
+
+      Toast({
+        type: 'error',
+        message: `File Must be in ${extensions} format!`,
+      });
+      return;
+    }
+    if (file) {
+      const fileLength = file.size / (1024 * 1024);
+      if (fileLength <= 1) {
+        setProfilePicture(e.target.files[0]);
+      } else {
+        Toast({
+          type: 'error',
+          message: 'File Size Exceeded! You can Upload Image Upto 1 MB!',
+        });
+      }
+    }
+  }
+
   const onSubmit = values => {
-    const profileInfo = {
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      DOBmonths: values.DOBmonths,
-      DOBdays: values.DOBdays,
-      DOByears: values.DOByears,
-      country: values.country,
-      city: values.city,
-      gender: values.gender,
-      bloodGroup: values.bloodGroup,
-      age: values.age,
-      height: values.height,
-      weight: values.weight,
-    };
-    dispatch(updateProfile({ profileInfo, userId }));
-  };
-
-  // Count the number of fields that are not empty
-  // const filledFieldCount = [
-  //   firstname,
-  //   lastname,
-  //   email,
-  //   DOBmonths,
-  //   DOBdays,
-  //   DOByears,
-  //   country,
-  //   city,
-  //   gender,
-  //   bloodGroup,
-  //   age,
-  //   height,
-  //   weight,
-  // ].filter(value => value !== '').length;
-
-  // // Calculate the progress percentage
-  // const totalFieldCount = 13; // Total number of fields
-  // const progressPercentagee = Math.floor((filledFieldCount / totalFieldCount) * 100);
-
-  const handleFileChange = event => {
-    const file = event.target.files[0];
-
     const payload = new FormData();
-    payload.append('userId', user?._id);
-    payload.append('profilePicture', file);
-    dispatch(editProfilePicture({ payload }));
-  };
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [passwordErrorSignal, setPasswordErrorSignal] = useState(false);
-
-  const [passwordShow, setPasswordShow] = useState(false);
-  const [confirmPasswordShow, setConfirmPasswordShow] = useState(false);
-
-  const handleChangePassword = () => {
-    if (confirmPassword !== newPassword) {
-      setPasswordError('Password must match!');
-      setPasswordErrorSignal(true);
-      return;
+    if (profile_picture) {
+      payload.append('profile_picture', profile_picture);
     }
 
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    Object.keys(values).forEach(key => {
+      if (key === 'gender' && values[key]) {
+        payload.append(key, values[key].value);
+      } else {
+        payload.append(key, values[key]);
+      }
+    });
 
-    if (!passwordRegex.test(newPassword)) {
-      setPasswordError(
-        'Password must contain at least 6 characters, one uppercase letter, and one special character (@, $, !, %, *, ?, or &)',
-      );
-      setPasswordErrorSignal(true);
-      return;
-    }
-    const passwordInfo = {
-      email: user?.email,
-      newPassword: confirmPassword,
-    };
-    console.log(passwordInfo);
-    dispatch(resetPassword({ passwordInfo }));
+    dispatch(authThunk.updateUser({ userId: user?._id, payload }));
   };
   return (
     <>
@@ -163,6 +123,7 @@ const Settings = () => {
                   <div className="p-0 ms-auto rounded-circle profile-photo-edit">
                     <input
                       id="profile-foreground-img-file-input"
+                      accept="image/jpeg, image/jpg, image/png"
                       type="file"
                       className="profile-foreground-img-file-input"
                     />
@@ -177,50 +138,41 @@ const Settings = () => {
                 <CardBody className="p-4">
                   <div className="text-center">
                     <div className="profile-user position-relative d-inline-block mx-auto  mb-4">
-                      <Image
-                        src={user?.profile_picture || avatar1}
-                        className="rounded-circle avatar-xl img-thumbnail user-profile-image"
-                        alt="user-profile"
-                      />
+                      {profile_picture ? (
+                        <Image
+                          src={URL.createObjectURL(profile_picture)}
+                          className="rounded-circle avatar-xl img-thumbnail user-profile-image"
+                          alt="user-profile"
+                          width={250}
+                          height={300}
+                        />
+                      ) : (
+                        <Image
+                          src={user?.profile_picture || avatar1}
+                          className="rounded-circle avatar-xl img-thumbnail user-profile-image"
+                          alt="user-profile"
+                          width={250}
+                          height={300}
+                        />
+                      )}
                       <div className="avatar-xs p-0 rounded-circle profile-photo-edit">
                         <input
                           id="profile-img-file-input"
-                          onChange={event => handleFileChange(event)}
+                          onChange={event => handleFileChange(event, 'image/jpeg, image/jpg, image/png')}
+                          accept="image/jpeg, image/jpg, image/png"
                           type="file"
                           className="profile-img-file-input"
                         />
                         <Label htmlFor="profile-img-file-input" className="profile-photo-edit avatar-xs">
                           <span className="avatar-title rounded-circle bg-light text-body">
-                            <i className="ri-camera-fill"></i>
+                            <i className="ri-camera-fill" />
                           </span>
                         </Label>
                       </div>
                     </div>
-                    <h5 className="fs-16 mb-1">{user ? user?.first_name + ' ' + user?.last_name : null}</h5>
+                    <h5 className="fs-16 mb-1">{user ? `${user?.first_name} ${user?.last_name}` : null}</h5>
                     <p className="text-muted mb-0">{user ? user?.email : null}</p>
                   </div>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardBody>
-                  <div className="d-flex align-items-center mb-5">
-                    <div className="flex-grow-1">
-                      <h5 className="card-title mb-0">Complete Your Settings</h5>
-                    </div>
-                    <div className="flex-shrink-0"></div>
-                  </div>
-                  {/* <div className="progress animated-progress custom-progress progress-label">
-                    <div
-                      className="progress-bar bg-info"
-                      role="progressbar"
-                      style={{ width: `${progressPercentagee}%` }}
-                      aria-valuenow={`${progressPercentagee}`}
-                      aria-valuemin="0"
-                      aria-valuemax="100">
-                      <div className="label">{progressPercentagee}%</div>
-                    </div>
-                  </div> */}
                 </CardBody>
               </Card>
             </Col>
@@ -299,9 +251,9 @@ const Settings = () => {
                                   Gender
                                 </Label>
                                 <Input
-                                  type="select"
                                   name="gender"
-                                  value={genderOptions?.find(option => option?.value === user?.gender) || ''}
+                                  type="select"
+                                  value={user && genderOptions?.find(option => option?.value === user?.gender)}
                                   options={genderOptions}
                                   hideSelectedOptions={false}
                                 />
@@ -309,8 +261,12 @@ const Settings = () => {
                             </Col>
                             <Col lg={12}>
                               <div className="hstack gap-2 justify-content-end">
-                                <Button type="submit" className="btn btn-primary">
-                                  Update
+                                <Button
+                                  type="submit"
+                                  loading={isLoading}
+                                  disabled={isLoading}
+                                  className="btn btn-primary">
+                                  Update Info.
                                 </Button>
                               </div>
                             </Col>
@@ -333,4 +289,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default withAuthProtection(Settings);

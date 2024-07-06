@@ -24,7 +24,7 @@ const LanguageDropdown = () => {
     setIsLanguageDropdown(!isLanguageDropdown);
   };
   return (
-    <React.Fragment>
+    <>
       <Dropdown
         isOpen={isLanguageDropdown}
         toggle={toggleLanguageDropdown}
@@ -44,7 +44,7 @@ const LanguageDropdown = () => {
           ))}
         </DropdownMenu>
       </Dropdown>
-    </React.Fragment>
+    </>
   );
 };
 

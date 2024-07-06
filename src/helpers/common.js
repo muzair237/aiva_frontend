@@ -18,7 +18,7 @@ export const setCookie = (name, value, minutes, days, domain) => {
 export const getCookie = name => {
   const nameEQ = `${name}=`;
   const ca = typeof document !== 'undefined' && document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
+  for (let i = 0; i < ca.length; i += 1) {
     let c = ca[i];
     while (c.charAt(0) === ' ') c = c.substring(1, c.length);
     if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
@@ -43,4 +43,14 @@ export const clearAllCookies = () => {
   });
 
   return true;
+};
+
+export const isFormData = value => {
+  const test = new FormData().has;
+
+  try {
+    return test.call(value, 0) || true;
+  } catch (e) {
+    return !test && {}.toString.call(value) === '[object FormData]';
+  }
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import Link from 'next/link';
 import * as Yup from 'yup';
@@ -9,7 +10,6 @@ import Input from '../components/Atoms/Input';
 import Label from '../components/Atoms/Label';
 import Button from '../components/Atoms/Button';
 import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
-import Image from 'next/image';
 import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 import isLoggedIn from '../components/Common/isLoggedIn';
 import authThunk from '../slices/auth/thunk';

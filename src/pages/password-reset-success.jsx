@@ -1,10 +1,11 @@
 import React from 'react';
-import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import Link from 'next/link';
+import Head from 'next/head';
+import Image from 'next/image';
+import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
-import Image from 'next/image';
-import Head from 'next/head';
+import isLoggedIn from '../components/Common/isLoggedIn';
 
 const PasswordResetSuccess = () => (
   <>
@@ -58,4 +59,4 @@ const PasswordResetSuccess = () => (
   </>
 );
 
-export default PasswordResetSuccess;
+export default isLoggedIn(PasswordResetSuccess);

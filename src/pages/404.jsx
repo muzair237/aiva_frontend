@@ -21,7 +21,7 @@ const Basic404 = () => (
                     <h1 className="display-1 fw-semibold">404</h1>
                     <h3 className="text-uppercase">Sorry, Page not Found</h3>
                     <p className="text-muted mb-4">The page you are looking for not available!</p>
-                    <Link href="/dashboard" className="btn btn-info">
+                    <Link href="/" className="btn btn-info">
                       <i className="mdi mdi-home me-1" />
                       Back to home
                     </Link>

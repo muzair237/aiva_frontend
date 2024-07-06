@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import Image from 'next/image';
+import Head from 'next/head';
 import Link from 'next/link';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -8,13 +10,11 @@ import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 import isLoggedIn from '../components/Common/isLoggedIn';
 import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
-import Image from 'next/image';
 import Input from '../components/Atoms/Input';
 import Label from '../components/Atoms/Label';
 import Button from '../components/Atoms/Button';
 import authThunk from '../slices/auth/thunk';
 import { getCookie } from '../helpers/common';
-import Head from 'next/head';
 
 const CreatePassword = () => {
   const email = getCookie('email');

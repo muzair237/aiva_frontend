@@ -1,15 +1,16 @@
 import React from 'react';
 import Head from 'next/head';
-import avatar from '../../public/images/users/user-avatar.png';
+import Image from 'next/image';
 import { Container, Row, Col, Card, Alert, CardBody, Label } from 'reactstrap';
 import { Formik, Form } from 'formik';
-import Input from '../components/Atoms/Input';
 import { useSelector } from 'react-redux';
-import withAuthProtection from '@/components/Common/withAuthProtection';
-import Image from 'next/image';
+import avatar from '../../public/images/users/user-avatar.png';
+import Input from '../components/Atoms/Input';
+import withAuthProtection from '../components/Common/withAuthProtection';
 
 const Profile = () => {
   const user = useSelector(state => state?.Auth?.user);
+  const initialValues = { first_name: '', last_name: '', email: '', DOB: '' };
   return (
     <>
       <Head>
@@ -32,6 +33,8 @@ const Profile = () => {
                         src={user?.profile_picture || avatar}
                         alt=""
                         className="avatar-md rounded-circle img-thumbnail"
+                        width={250}
+                        height={300}
                       />
                     </div>
                     <div className="flex-grow-1 align-self-center">
@@ -51,7 +54,7 @@ const Profile = () => {
 
           <Card>
             <CardBody>
-              <Formik>
+              <Formik initialValues={initialValues}>
                 <Form>
                   <Row>
                     <Col xs={6}>
@@ -70,9 +73,9 @@ const Profile = () => {
                       <div className="form-group">
                         <Label className="form-label">Last Name</Label>
                         <Input
-                          name="first_name"
+                          name="last_name"
                           value={user?.last_name}
-                          placeholder="Enter First Name"
+                          placeholder="Enter Last Name"
                           type="text"
                           disabled
                         />
@@ -90,7 +93,7 @@ const Profile = () => {
                       <div className="form-group">
                         <Label className="form-label">Date of Birth</Label>
                         <Input
-                          name="email"
+                          name="DOB"
                           value={new Date(user?.DOB).toLocaleDateString('en-US', {
                             month: 'long',
                             day: 'numeric',

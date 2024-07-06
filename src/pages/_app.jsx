@@ -10,11 +10,13 @@ import { getCookie } from '../helpers/common';
 import Loader from '../components/Molecules/Loader';
 
 export default function App({ Component, pageProps }) {
+  const [isRendered, setIsRendered] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const allowedPages = getCookie('_aivautc');
 
   useEffect(() => {
+    setIsRendered(true);
     router.events.on('routeChangeError', () => setLoading(false));
     router.events.on('routeChangeStart', () => setLoading(true));
     router.events.on('routeChangeComplete', () => setLoading(false));
@@ -27,23 +29,25 @@ export default function App({ Component, pageProps }) {
   }, [router.events]);
 
   return (
-    <Provider store={store}>
-      {loading && <Loader />}
-      {allowedPages ? (
-        <VerticalLayout>
+    isRendered && (
+      <Provider store={store}>
+        {loading && <Loader />}
+        {allowedPages ? (
+          <VerticalLayout>
+            <Component {...pageProps} />
+          </VerticalLayout>
+        ) : (
           <Component {...pageProps} />
-        </VerticalLayout>
-      ) : (
-        <Component {...pageProps} />
-      )}
-      <Toaster
-        position="top-center"
-        reverseOrder
-        gutter={8}
-        toastOptions={{
-          duration: 4700,
-        }}
-      />
-    </Provider>
+        )}
+        <Toaster
+          position="top-center"
+          reverseOrder
+          gutter={8}
+          toastOptions={{
+            duration: 4700,
+          }}
+        />
+      </Provider>
+    )
   );
 }

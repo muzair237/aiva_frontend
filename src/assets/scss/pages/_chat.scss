@@ -470,6 +470,22 @@
       background-color: $dark;
     }
   }
+  .no-messages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .no-messages-content {
+    text-align: center;
+    color: #999;
+  }
+
+  .no-messages-content h2 {
+    font-size: 1rem;
+    margin: 0;
+  }
 }
 
 .chat-input-section {

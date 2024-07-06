@@ -1,4 +1,7 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import Image from 'next/image';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,9 +10,8 @@ import ParticlesAuth from '../components/Molecules/ParticlesAuth';
 import Button from '../components/Atoms/Button';
 import { getCookie } from '../helpers/common';
 import authThunk from '../slices/auth/thunk';
-import Head from 'next/head';
 import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
-import Image from 'next/image';
+import isLoggedIn from '../components/Common/isLoggedIn';
 
 const VerifyOTP = () => {
   const dispatch = useDispatch();
@@ -29,7 +31,7 @@ const VerifyOTP = () => {
       } else {
         getInputElement(index).blur();
         const otpDigits = [];
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= 4; i += 1) {
           otpDigits.push(getInputElement(i).value);
         }
         setOtp(otpDigits.join(''));
@@ -194,4 +196,4 @@ const VerifyOTP = () => {
   );
 };
 
-export default VerifyOTP;
+export default isLoggedIn(VerifyOTP);

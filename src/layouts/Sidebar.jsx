@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import SimpleBar from 'simplebar-react';
 import { Container } from 'reactstrap';
-import VerticalLayout from './VerticalLayouts/index';
+import VerticalLayout from './VerticalLayouts';
 import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
 import webNovaLogoSm from '../../public/images/svg/webNovaLogoSm.svg';
 import logoLight from '../../public/images/logo-light.png';
@@ -57,33 +57,17 @@ const Sidebar = ({ layoutType }) => {
             <i className="ri-record-circle-line" />
           </button>
         </div>
-        {layoutType === 'horizontal' ? (
-          <div id="scrollbar">
+        <>
+          <SimpleBar id="scrollbar" className="h-100">
             <Container fluid>
               <div id="two-column-menu" />
               <ul className="navbar-nav" id="navbar-nav">
-                <HorizontalLayout />
+                <VerticalLayout layoutType={layoutType} />
               </ul>
             </Container>
-          </div>
-        ) : layoutType === 'twocolumn' ? (
-          <>
-            <TwoColumnLayout />
-            <div className="sidebar-background" />
-          </>
-        ) : (
-          <>
-            <SimpleBar id="scrollbar" className="h-100">
-              <Container fluid>
-                <div id="two-column-menu" />
-                <ul className="navbar-nav" id="navbar-nav">
-                  <VerticalLayout layoutType={layoutType} />
-                </ul>
-              </Container>
-            </SimpleBar>
-            <div className="sidebar-background" />
-          </>
-        )}
+          </SimpleBar>
+          <div className="sidebar-background" />
+        </>
       </div>
       <div className="vertical-overlay" />
     </>

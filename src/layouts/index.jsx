@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 import withRouter from '../components/Common/withRouter';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -15,7 +15,6 @@ import {
   changeLeftsidebarViewType,
   changeSidebarImageType,
 } from '../slices/layouts/thunk';
-import { useSelector, useDispatch } from 'react-redux';
 
 const Layout = props => {
   const [headerClass, setHeaderClass] = useState('');
@@ -41,18 +40,20 @@ const Layout = props => {
     leftSidebarViewType: state.Layout.leftSidebarViewType,
     leftSidebarImageType: state.Layout.leftSidebarImageType,
   }));
-  // class add remove in header
-  useEffect(() => {
-    window.addEventListener('scroll', scrollNavigation, true);
-  });
+
   function scrollNavigation() {
-    var scrollup = document.documentElement.scrollTop;
+    const scrollup = document.documentElement.scrollTop;
     if (scrollup > 50) {
       setHeaderClass('topbar-shadow');
     } else {
       setHeaderClass('');
     }
   }
+
+  useEffect(() => {
+    window.addEventListener('scroll', scrollNavigation, true);
+  });
+
   /*
     layout settings
     */
@@ -112,10 +113,6 @@ const Layout = props => {
       {/* <RightSidebar /> */}
     </>
   );
-};
-
-Layout.propTypes = {
-  children: PropTypes.object,
 };
 
 export default withRouter(Layout);

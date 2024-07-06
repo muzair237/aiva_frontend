@@ -8,7 +8,7 @@ const Footer = () => (
         <Row>
           <Col sm={6}>{new Date().getFullYear()} © WebNova.</Col>
           <Col sm={6}>
-            <div className="text-sm-end d-none d-sm-block">Design & Develop by WebNova</div>
+            <div className="text-sm-end d-none d-sm-block">Developed by WebNova</div>
           </Col>
         </Row>
       </Container>

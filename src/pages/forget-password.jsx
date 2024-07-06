@@ -1,5 +1,7 @@
 import React from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Row, Col, Alert, Card, CardBody, Container } from 'reactstrap';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
@@ -13,9 +15,6 @@ import Label from '../components/Atoms/Label';
 import Button from '../components/Atoms/Button';
 import webNovaLogoLg from '../../public/images/svg/webNovaLogoLg.svg';
 import ParticlesAuth from '../components/Molecules/ParticlesAuth';
-import Image from 'next/image';
-import Head from 'next/head';
-import { setCookie } from '@/helpers/common';
 
 const ForgetPasswordPage = () => {
   const dispatch = useDispatch();

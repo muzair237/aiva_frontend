@@ -1,8 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Toast } from '../../components/Molecules/Toast';
-import { setCookie, deleteCookie, clearAllCookies } from '../../helpers/common';
+import { setCookie, deleteCookie, clearAllCookies, isFormData } from '../../helpers/common';
 import { Fetch } from '../../helpers/fetchWrapper';
-import { SIGNUP, LOGIN, FORGET_PASSWORD, VERIFY_OTP, RESET_PASSWORD, LOGOUT } from '../../helpers/url_helper';
+import {
+  SIGNUP,
+  LOGIN,
+  FORGET_PASSWORD,
+  VERIFY_OTP,
+  RESET_PASSWORD,
+  LOGOUT,
+  UPDATE_USER,
+} from '../../helpers/url_helper';
 
 const authThunk = {
   url: `${process.env.NEXT_PUBLIC_AIVA_API_URL}/user`,
@@ -19,7 +27,7 @@ const authThunk = {
           type: 'success',
           message,
         });
-        router.push('/dashboard');
+        router.push('/');
         return user;
       }
       const { message } = await res.json();
@@ -147,6 +155,35 @@ const authThunk = {
         message: 'Something Went Wrong',
       });
       throw new Error('Something Went Wrong');
+    }
+  }),
+
+  updateUser: createAsyncThunk('update/updateUser', async ({ userId, payload }) => {
+    const isFd = isFormData(payload);
+    try {
+      let res;
+      if (isFd) {
+        res = await Fetch.upload(`${authThunk.url}/${UPDATE_USER}/${userId}`, 'PUT', payload);
+      } else {
+        res = await Fetch.put(`${authThunk.url}/${UPDATE_USER}/${userId}`, payload);
+      }
+      if (res.status >= 200 && res.status < 300) {
+        res = await res.json();
+
+        Toast({
+          type: 'success',
+          message: res?.message,
+        });
+        return res?.updatedUser;
+      }
+      const { message } = await res.json();
+      throw new Error(message ?? 'Something Went Wrong');
+    } catch ({ message }) {
+      Toast({
+        type: 'error',
+        message,
+      });
+      throw message;
     }
   }),
 };

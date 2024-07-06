@@ -1,15 +1,20 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
 import { Col, Container, Row } from 'reactstrap';
-import Input from '@/components/Atoms/Input';
-import Button from '@/components/Atoms/Button';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import Input from '../../Atoms/Input';
+import Button from '../../Atoms/Button';
+import enquiryThunk from '../../../slices/enquiry/thunk';
 
 const Enquiry = () => {
+  const dispatch = useDispatch();
+  const isLoading = useSelector(state => state?.Enquiry?.isLoading);
   const initialValues = { name: '', email: '', subject: '', message: '' };
 
   const validationSchema = Yup.object({
-    name: Yup.string()
+    full_name: Yup.string()
       .required('Please enter your name!')
       .min(2, 'Name must be at least 2 characters long')
       .max(50, 'Name must be less than 50 characters long'),
@@ -24,8 +29,9 @@ const Enquiry = () => {
       .max(500, 'Message must be less than 500 characters long'),
   });
 
-  const onSubmit = async payload => {
-    // dispatch(authThunk.login({ payload, router }));
+  const onSubmit = async (payload, { resetForm }) => {
+    dispatch(enquiryThunk.createEnquiry({ payload }));
+    resetForm();
   };
 
   return (
@@ -37,9 +43,9 @@ const Enquiry = () => {
               <div className="text-center mb-5">
                 <h3 className="mb-3 fw-semibold">Get In Touch</h3>
                 <p className="text-muted mb-4 ff-secondary">
-                  We value your feedback and suggestions. If you need to contact higher authorities or provide any
-                  recommendations, feel free to reach out. You can also ask any of your questions through WebNova, our
-                  intelligent virtual assistant, for quick and accurate responses.
+                  We value your feedback and suggestions. If you need to contact us or provide any recommendations, feel
+                  free to reach out. You can also ask any of your questions through WebNova, our intelligent virtual
+                  assistant, for quick and accurate responses.
                 </p>
               </div>
             </Col>
@@ -65,34 +71,34 @@ const Enquiry = () => {
 
             <Col lg={8}>
               <div>
-                <Formik initialValues={initialValues} validationSchema={validationSchema}>
+                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
                   <Form>
                     <Row>
                       <Col lg={6}>
                         <div className="mb-4">
                           <label htmlFor="name" className="form-label fs-13">
-                            Name
+                            Name*
                           </label>
                           <Input
-                            name="name"
+                            name="full_name"
                             id="name"
                             type="text"
                             className="form-control bg-light border-light"
-                            placeholder="Your name*"
+                            placeholder="Your Full name"
                           />
                         </div>
                       </Col>
                       <Col lg={6}>
                         <div className="mb-4">
                           <label htmlFor="email" className="form-label fs-13">
-                            Email
+                            Email*
                           </label>
                           <Input
                             name="email"
                             id="email"
                             type="email"
                             className="form-control bg-light border-light"
-                            placeholder="Your email*"
+                            placeholder="Your email"
                           />
                         </div>
                       </Col>
@@ -101,7 +107,7 @@ const Enquiry = () => {
                       <Col lg={12}>
                         <div className="mb-4">
                           <label htmlFor="subject" className="form-label fs-13">
-                            Subject
+                            Subject*
                           </label>
                           <Input
                             type="text"
@@ -117,7 +123,7 @@ const Enquiry = () => {
                       <Col lg={12}>
                         <div className="mb-3">
                           <label htmlFor="comments" className="form-label fs-13">
-                            Message
+                            Message*
                           </label>
                           <Input
                             name="message"
@@ -131,11 +137,7 @@ const Enquiry = () => {
                     </Row>
                     <Row>
                       <Col lg={12} className="text-end">
-                        <Button
-                          color="primary"
-                          // loading={isLoading}
-                          // disabled={isLoading}
-                          type="submit">
+                        <Button color="primary" loading={isLoading} disabled={isLoading} type="submit">
                           Submit
                         </Button>
                       </Col>

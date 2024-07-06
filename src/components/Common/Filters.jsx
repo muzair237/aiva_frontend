@@ -4,7 +4,7 @@ import Select from 'react-select';
 import debounce from 'lodash/debounce';
 
 const PermissionGlobalFilter = ({ setFilters }) => {
-  const [searchText, setSearchText] = useState('');
+  const [setSearchText] = useState('');
   const debounceRef = useRef(0);
   const [permissionFilter, setPermissionFilter] = useState({ label: 'Latest', value: 'latest' });
   const options = [

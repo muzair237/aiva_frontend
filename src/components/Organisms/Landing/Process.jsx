@@ -11,18 +11,13 @@ const Process = () => {
     },
     {
       id: 2,
-      lable: 'Customize Settings',
-      desc: 'Personalize your experience by adjusting your settings.',
-    },
-    {
-      id: 3,
       lable: 'Ask Questions',
       desc: 'Interact with WebNova by asking your queries.',
     },
     {
-      id: 4,
+      id: 3,
       lable: 'Get Insights',
-      desc: 'Receive personal insights and analytics from WebNova.',
+      desc: 'Get guidance related to your queries from WebNova.',
     },
   ];
 
@@ -45,11 +40,11 @@ const Process = () => {
           </Row>
           <Row>
             {webNovaProcess.map((item, key) => (
-              <Col lg={3} md={6} key={key}>
+              <Col lg={4} md={6} key={key}>
                 <Card className={key === 0 ? 'card shadow-lg' : 'card shadow-none card-border-effect-none border-0'}>
                   <CardBody className="p-4">
                     <h1 className="fw-bold display-5 ff-secondary mb-4 text-success position-relative">
-                      <div className="job-icon-effect"></div>
+                      <div className="job-icon-effect" />
                       <span>{item.id}</span>
                     </h1>
                     <h6 className="fs-18 mb-2">{item.lable}</h6>

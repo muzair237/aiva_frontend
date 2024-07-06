@@ -1,11 +1,15 @@
 import React from 'react';
+import { Col, Row } from 'reactstrap';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import Input from '@/components/Atoms/Input';
-import Label from '@/components/Atoms/Label';
-import { Col, Row } from 'reactstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import Input from '../../Atoms/Input';
+import Label from '../../Atoms/Label';
+import authThunk from '../../../slices/auth/thunk';
 
 const UpdatePassword = () => {
+  const dispatch = useDispatch();
+  const user = useSelector(state => state?.Auth?.user);
   const initialValues = { password: '', newPassword: '' };
 
   const validationSchema = Yup.object({
@@ -23,11 +27,16 @@ const UpdatePassword = () => {
       .required('Please Confirm Password!'),
   });
 
-  const onSubmit = payload => {
-    dispatch(authThunk.signUp({ payload, router }));
+  const onSubmit = (values, { resetForm }) => {
+    const payload = {
+      email: user?.email,
+      password: values?.newPassword,
+    };
+    dispatch(authThunk.updateUser({ userId: user?._id, payload }));
+    resetForm();
   };
   return (
-    <Formik initialValues={initialValues} validationSchema={validationSchema}>
+    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
       <Form>
         <Row className="g-2">
           <div className="col-6">
@@ -48,7 +57,7 @@ const UpdatePassword = () => {
           </div>
           <Col lg={12}>
             <div className="text-end">
-              <button type="submit" className="btn btn-info">
+              <button type="submit" className="btn btn-primary">
                 Change Password
               </button>
             </div>

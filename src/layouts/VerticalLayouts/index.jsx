@@ -1,5 +1,5 @@
+/* eslint-disable no-shadow */
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Collapse } from 'reactstrap';
@@ -13,23 +13,27 @@ const VerticalLayout = props => {
   const router = useRouter();
   const navData = navdata().props.children;
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    const initMenu = () => {
-      const pathName = router.pathname;
-      const ul = document.getElementById('navbar-nav');
-      const items = ul.getElementsByTagName('a');
-      let itemsArray = [...items]; // converts NodeList to Array
-      removeActivation(itemsArray);
-      let matchingMenuItem = itemsArray.find(x => x.pathname === pathName);
-      if (matchingMenuItem) {
-        activateParentDropdown(matchingMenuItem);
+  const removeActivation = items => {
+    const actiItems = items.filter(x => x.classList.contains('active'));
+
+    actiItems.forEach(item => {
+      if (item.classList.contains('menu-link')) {
+        if (!item.classList.contains('active')) {
+          item.setAttribute('aria-expanded', false);
+        }
+        if (item.nextElementSibling) {
+          item.nextElementSibling.classList.remove('show');
+        }
       }
-    };
-    if (props.layoutType === 'vertical') {
-      initMenu();
-    }
-  }, [router.pathname, props.layoutType, props.layoutType]);
+      if (item.classList.contains('nav-link')) {
+        if (item.nextElementSibling) {
+          item.nextElementSibling.classList.remove('show');
+        }
+        item.setAttribute('aria-expanded', false);
+      }
+      item.classList.remove('active');
+    });
+  };
 
   function activateParentDropdown(item) {
     item.classList.add('active');
@@ -60,27 +64,23 @@ const VerticalLayout = props => {
     return false;
   }
 
-  const removeActivation = items => {
-    const actiItems = items.filter(x => x.classList.contains('active'));
-
-    actiItems.forEach(item => {
-      if (item.classList.contains('menu-link')) {
-        if (!item.classList.contains('active')) {
-          item.setAttribute('aria-expanded', false);
-        }
-        if (item.nextElementSibling) {
-          item.nextElementSibling.classList.remove('show');
-        }
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const initMenu = () => {
+      const pathName = router.pathname;
+      const ul = document.getElementById('navbar-nav');
+      const items = ul.getElementsByTagName('a');
+      const itemsArray = [...items]; // converts NodeList to Array
+      removeActivation(itemsArray);
+      const matchingMenuItem = itemsArray.find(x => x.pathname === pathName);
+      if (matchingMenuItem) {
+        activateParentDropdown(matchingMenuItem);
       }
-      if (item.classList.contains('nav-link')) {
-        if (item.nextElementSibling) {
-          item.nextElementSibling.classList.remove('show');
-        }
-        item.setAttribute('aria-expanded', false);
-      }
-      item.classList.remove('active');
-    });
-  };
+    };
+    if (props.layoutType === 'vertical') {
+      initMenu();
+    }
+  }, [router.pathname, props.layoutType, props.layoutType]);
 
   return (
     <>
@@ -204,11 +204,6 @@ const VerticalLayout = props => {
       ))}
     </>
   );
-};
-
-VerticalLayout.propTypes = {
-  location: PropTypes.object,
-  t: PropTypes.any,
 };
 
 export default withRouter(withTranslation()(VerticalLayout));

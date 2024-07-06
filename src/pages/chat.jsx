@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
+import Image from 'next/image';
 import {
   Container,
   Row,
@@ -15,41 +16,51 @@ import {
   UncontrolledDropdown,
 } from 'reactstrap';
 import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import useSound from 'use-sound';
 import { isEmpty, map } from 'lodash';
 import FeatherIcon from 'feather-icons-react';
-import { useDispatch, useSelector } from 'react-redux';
+import { format } from 'date-fns';
 import withAuthProtection from '../components/Common/withAuthProtection';
 import avatar from '../../public/images/chatbot.png';
 import chatThunk from '../slices/chat/thunk';
-import Image from 'next/image';
-import useSound from 'use-sound';
 import messageSent from '../../public/audio/messageSent.mp3';
 import messageReceived from '../../public/audio/messageReceived.mp3';
-import MessageLoader from '@/components/Molecules/MessageLoader';
+import MessageLoader from '../components/Molecules/MessageLoader';
+import { Toast } from '../components/Molecules/Toast';
+import DeleteModal from '../components/Molecules/DeleteModal';
 
 function Chat() {
   const dispatch = useDispatch();
   const user = useSelector(state => state?.Auth?.user);
   const userChat = useSelector(state => state?.Chat?.chat);
-  // const isLoading = useSelector(state => state?.Chat?.isLoading);
   const [isLoading, setIsLoading] = useState(false);
   const [chat, setChat] = useState(userChat);
   const [isInfoDetails, setIsInfoDetails] = useState(false);
-  const [Chat_Box_Image, setChat_Box_Image] = useState(avatar);
+  const [Chat_Box_Image] = useState(avatar);
   const [settings_Menu, setsettings_Menu] = useState(false);
-  const [Chat_Box_Username, setChat_Box_Username] = useState('Virtual Assistant');
+  const [Chat_Box_Username] = useState('Virtual Assistant');
   const [messageBox, setMessageBox] = useState(null);
   const [curMessage, setcurMessage] = useState('');
   const [search_Menu, setsearch_Menu] = useState(false);
   const [reply, setreply] = useState('');
-  const [messageSentSound] = useSound(messageSent, { volume: 0.5 });
-  const [messageReceivedSound] = useSound(messageReceived, { volume: 0.5 });
+  const [messageSentSound] = useSound(messageSent, { volume: 0.8 });
+  const [messageReceivedSound] = useSound(messageReceived, { volume: 0.8 });
+  const [originalChat, setOriginalChat] = useState([]);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [messageToDelete, setMessageToDelete] = useState();
+  const [deleteMessage, setdeleteMessage] = useState('');
 
   useEffect(() => {
     dispatch(chatThunk.getChat({ id: user?._id }));
   }, []);
+
+  useEffect(() => {
+    setChat(userChat);
+    setOriginalChat(userChat);
+  }, [userChat]);
 
   const toggleSearch = () => {
     setsearch_Menu(!search_Menu);
@@ -74,6 +85,18 @@ function Chat() {
         timeStamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
         message: curMessage,
         sender: user ? `${user.firstName} ${user.lastName}` : 'Unknown',
+        createdAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"),
+      },
+    ]);
+    setOriginalChat(prev => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        roomId: 1,
+        timeStamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
+        message: curMessage,
+        sender: user ? `${user.firstName} ${user.lastName}` : 'Unknown',
+        createdAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"),
       },
     ]);
     // Adding message to chat
@@ -86,11 +109,29 @@ function Chat() {
       };
       const resultAction = await dispatch(chatThunk.askQuery({ payload }));
       messageReceivedSound();
-      setChat(prev => [...prev, resultAction.payload.response]);
-    } catch (error) {
-      console.error('Error occurred:', error);
+      setChat(prev => [...prev.slice(0, -1), resultAction.payload.message, resultAction.payload.response]);
+
+      // console.log(resultAction.payload.response);
+      setOriginalChat(prev => [...prev, resultAction.payload.message, resultAction.payload.response]);
     } finally {
       setIsLoading(false); // After async operation completes, set isLoading back to false
+    }
+  };
+
+  const deleteMessagef = async () => {
+    const res = await dispatch(chatThunk.deleteMessage({ messageToDelete }));
+    if (res?.payload?.success) {
+      setChat(prev => prev.filter(message => message._id !== messageToDelete));
+      setOriginalChat(prev => prev.filter(message => message._id !== messageToDelete));
+      setDeleteModal(false);
+    }
+  };
+  const deleteChat = async () => {
+    const res = await dispatch(chatThunk.deleteChat({ id: user?._id }));
+    if (res?.payload?.success) {
+      setChat([]);
+      setOriginalChat([]);
+      setDeleteModal(false);
     }
   };
 
@@ -105,7 +146,7 @@ function Chat() {
   }, [chat, scrollToBottom]);
 
   const onKeyPress = e => {
-    const { key, value } = e;
+    const { key } = e;
     if (key === 'Enter') {
       e.preventDefault();
       addMessage();
@@ -113,26 +154,19 @@ function Chat() {
   };
 
   const searchMessages = () => {
-    let searchInput;
-    let searchFilter;
-    let searchUL;
-    let searchLI;
-    let a;
-    let txtValue;
-    searchInput = document.getElementById('searchMessage');
-    searchFilter = searchInput.value.toUpperCase();
-    searchUL = document.getElementById('users-conversation');
-    searchLI = searchUL.getElementsByTagName('li');
-    Array.prototype.forEach.call(searchLI, search => {
-      a = search.getElementsByTagName('p')[0] ? search.getElementsByTagName('p')[0] : '';
-      txtValue = a.textContent || a.innerText ? a.textContent || a.innerText : '';
-      if (txtValue.toUpperCase().indexOf(searchFilter) > -1) {
-        search.style.display = '';
-      } else {
-        search.style.display = 'none';
-      }
-    });
+    const searchInput = document.getElementById('searchMessage');
+    // if (!searchInput.value) return;
+
+    const searchFilter = searchInput.value.toUpperCase();
+
+    if (searchFilter === '') {
+      setChat(originalChat);
+    } else {
+      const filteredChat = originalChat.filter(message => message.message.toUpperCase().includes(searchFilter));
+      setChat(filteredChat);
+    }
   };
+
   return (
     <>
       <Head>
@@ -201,6 +235,7 @@ function Chat() {
                                         className="form-control bg-light border-light"
                                         placeholder="Search here..."
                                         id="searchMessage"
+                                        autoFocus
                                       />
                                       <i className="ri-search-2-line search-icon" />
                                     </div>
@@ -221,16 +256,15 @@ function Chat() {
                                   <FeatherIcon icon="more-vertical" className="icon-sm" />
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                  <DropdownItem href="#" className="d-block d-lg-none user-profile-show">
-                                    <i className="ri-user-2-fill align-bottom text-muted me-2" /> View Profile
-                                  </DropdownItem>
                                   <DropdownItem href="#">
-                                    <i className="ri-inbox-archive-line align-bottom text-muted me-2" /> Archive
+                                    {' '}
+                                    <i className="ri-user-fill align-bottom text-muted me-2" /> View Profile
                                   </DropdownItem>
-                                  <DropdownItem href="#">
-                                    <i className="ri-mic-off-line align-bottom text-muted me-2" /> Muted
-                                  </DropdownItem>
-                                  <DropdownItem href="#">
+                                  <DropdownItem
+                                    onClick={() => {
+                                      setDeleteModal(true);
+                                      setdeleteMessage('Chat');
+                                    }}>
                                     {' '}
                                     <i className="ri-delete-bin-5-line align-bottom text-muted me-2" /> Delete
                                   </DropdownItem>
@@ -249,13 +283,15 @@ function Chat() {
                         containerRef={ref => setMessageBox(ref)}>
                         <div id="elmLoader" />
                         <ul className="list-unstyled chat-conversation-list" id="users-conversation">
-                          {chat &&
+                          {chat && chat?.length > 0 ? (
                             map(chat, (message, key) => (
                               <li
-                                className={message.sender === Chat_Box_Username ? ' chat-list left' : 'chat-list right'}
+                                className={
+                                  message?.sender === Chat_Box_Username ? ' chat-list left' : 'chat-list right'
+                                }
                                 key={key}>
                                 <div className="conversation-list">
-                                  {message.sender === Chat_Box_Username && (
+                                  {message?.sender === Chat_Box_Username && (
                                     <div className="chat-avatar">
                                       <Image src={Chat_Box_Image} alt="" />
                                     </div>
@@ -271,42 +307,60 @@ function Chat() {
                                           <i className="ri-more-2-fill" />
                                         </DropdownToggle>
                                         <DropdownMenu>
-                                          <DropdownItem
+                                          {/* <DropdownItem
                                             href="#"
                                             className="reply-message"
                                             onClick={() => setreply(message)}>
                                             <i className="ri-reply-line me-2 text-muted align-bottom" />
                                             Reply
-                                          </DropdownItem>
-                                          <DropdownItem href="#">
-                                            <i className="ri-share-line me-2 text-muted align-bottom" />
-                                            Forward
-                                          </DropdownItem>
-                                          <DropdownItem href="#" onClick={e => handleCkick(e.target)}>
+                                          </DropdownItem> */}
+                                          <DropdownItem
+                                            href="#"
+                                            onClick={() => {
+                                              navigator.clipboard.writeText(message?.message);
+                                              Toast({
+                                                type: 'success',
+                                                message: 'Message Copied to Clipboard!',
+                                              });
+                                            }}>
                                             <i className="ri-file-copy-line me-2 text-muted align-bottom" />
                                             Copy
                                           </DropdownItem>
-                                          <DropdownItem href="#">
-                                            <i className="ri-bookmark-line me-2 text-muted align-bottom" />
-                                            Bookmark
-                                          </DropdownItem>
-                                          <DropdownItem href="#" onClick={() => dispatch(onDeleteMessage(message.id))}>
+                                          <DropdownItem
+                                            onClick={() => {
+                                              setDeleteModal(true);
+                                              setMessageToDelete(message?._id);
+                                              setdeleteMessage('Message');
+                                              // deleteMessage(message?._id)
+                                            }}>
                                             <i className="ri-delete-bin-5-line me-2 text-muted align-bottom" />
                                             Delete
                                           </DropdownItem>
                                         </DropdownMenu>
                                       </UncontrolledDropdown>
                                     </div>
-                                    <div className="conversation-name">
+                                    {/* <div className="conversation-name">
                                       <small className="text-muted time">{message?.timeStamp}</small>{' '}
                                       <span className="text-primary check-message-icon">
                                         <i className="ri-check-double-line align-bottom" />
                                       </span>
+                                    </div> */}
+                                    <div className="message-date">
+                                      <small className="text-muted">
+                                        {format(new Date(message.createdAt), 'dd MMM yyyy, h:mm a')}
+                                      </small>
                                     </div>
                                   </div>
                                 </div>
                               </li>
-                            ))}
+                            ))
+                          ) : (
+                            <li className="no-messages">
+                              <div className="no-messages-content">
+                                <h2>No messages yet. Start the conversation now!</h2>
+                              </div>
+                            </li>
+                          )}
                           {isLoading && (
                             <li className="chat-list left">
                               <MessageLoader />
@@ -387,6 +441,14 @@ function Chat() {
           </div>
         </Container>
       </div>
+      {deleteModal && (
+        <DeleteModal
+          isOpen={deleteModal}
+          setIsOpen={setDeleteModal}
+          handleClick={deleteMessage === 'Message' ? deleteMessagef : deleteChat}
+          message={`Are you sure you Want to Delete this ${deleteMessage}? This action cannot be undone.`}
+        />
+      )}
     </>
   );
 }

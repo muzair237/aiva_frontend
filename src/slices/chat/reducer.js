@@ -23,7 +23,7 @@ const chatSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(chatThunk.getChat.rejected, (state, action) => {
-        state.isLoggedIn = false;
+        state.isLoading = false;
         state.errorMsg = action?.error?.message;
       })
 
@@ -31,11 +31,36 @@ const chatSlice = createSlice({
       .addCase(chatThunk.askQuery.pending, state => {
         state.isLoading = true;
       })
-      .addCase(chatThunk.askQuery.fulfilled, (state, action) => {
+      .addCase(chatThunk.askQuery.fulfilled, state => {
         state.isLoading = false;
       })
       .addCase(chatThunk.askQuery.rejected, (state, action) => {
-        state.isLoggedIn = false;
+        state.isLoading = false;
+        state.errorMsg = action?.error?.message;
+      })
+
+      // DELETE MESSAGE
+      .addCase(chatThunk.deleteMessage.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(chatThunk.deleteMessage.fulfilled, state => {
+        state.isLoading = false;
+      })
+      .addCase(chatThunk.deleteMessage.rejected, (state, action) => {
+        state.isLoading = false;
+        state.errorMsg = action?.error?.message;
+      })
+
+      // DELETE MESSAGE
+      .addCase(chatThunk.deleteChat.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(chatThunk.deleteChat.fulfilled, state => {
+        state.chat = [];
+        state.isLoading = false;
+      })
+      .addCase(chatThunk.deleteChat.rejected, (state, action) => {
+        state.isLoading = false;
         state.errorMsg = action?.error?.message;
       });
   },
